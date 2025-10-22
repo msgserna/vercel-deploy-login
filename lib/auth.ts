@@ -1,40 +1,25 @@
 "use client";
 
 import { createClient } from "@supabase/supabase-js";
+import { getBaseUrl } from "./base-url";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, 
-  {
-    auth: { persistSession: true, autoRefreshToken: true },
-  }
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  { auth: { persistSession: true, autoRefreshToken: true } }
 );
 
-type SignUpInput = {
-  nombre: string;
-  apellidos: string;
-  email: string;
-  password: string;
-};
+type SignUpInput = { nombre: string; apellidos: string; email: string; password: string };
 
-/**
- * Crea el usuario en Supabase Auth.
- * - Guarda nombre/apellidos en user_metadata
- * - Redirige el enlace del email a /login (si confirmación está activa)
- * - Devuelve needsEmailConfirm para que el caller decida la navegación
- */
 export async function signUp({ nombre, apellidos, email, password }: SignUpInput) {
-  const emailRedirectTo =
-    typeof window !== "undefined"
-      ? `${window.location.origin}/login`
-      : undefined;
+  const emailRedirectTo = `${getBaseUrl()}/login`; // 👈 ahora apunta a /login en tu dominio
 
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
-      emailRedirectTo,            // tras confirmar, volverá a /login
-      data: { nombre, apellidos } // metadatos útiles
+      emailRedirectTo,
+      data: { nombre, apellidos },
     },
   });
 
@@ -45,8 +30,5 @@ export async function signUp({ nombre, apellidos, email, password }: SignUpInput
     throw new Error(error.message);
   }
 
-  return {
-    needsEmailConfirm: !data.session, // si tienes “Confirm email” ON, será true
-    user: data.user ?? null,
-  };
+  return { needsEmailConfirm: !data.session, user: data.user ?? null };
 }
