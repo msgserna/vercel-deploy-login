@@ -12,7 +12,7 @@ const supabase = createClient(
 type SignUpInput = { nombre: string; apellidos: string; email: string; password: string };
 
 export async function signUp({ nombre, apellidos, email, password }: SignUpInput) {
-  const emailRedirectTo = `${getBaseUrl()}/login`; // 👈 ahora apunta a /login en tu dominio
+  const emailRedirectTo = `${getBaseUrl()}/login`; // login en tu dominio
 
   const { data, error } = await supabase.auth.signUp({
     email,

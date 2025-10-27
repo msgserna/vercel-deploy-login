@@ -1,3 +1,4 @@
+// components/login-form.tsx
 "use client";
 
 import * as React from "react";
@@ -16,9 +17,10 @@ import { Input } from "@/components/ui/input";
 
 type LoginFormProps = React.ComponentProps<"form"> & {
   checkEmail?: boolean;
+  nextPath?: string; // ⬅️ nueva prop
 };
 
-export function LoginForm({ className, checkEmail = false, ...props }: LoginFormProps) {
+export function LoginForm({ className, checkEmail = false, nextPath, ...props }: LoginFormProps) {
   const router = useRouter();
   const [loading, setLoading] = React.useState(false);
   const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
@@ -43,7 +45,8 @@ export function LoginForm({ className, checkEmail = false, ...props }: LoginForm
         return;
       }
 
-      router.replace("/dashboard");
+      // ⬇️ si nos pasaron ?next=..., respétalo; si no, /dashboard
+      router.replace(nextPath || "/dashboard");
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Error inesperado al iniciar sesión.";
       setErrorMsg(msg);

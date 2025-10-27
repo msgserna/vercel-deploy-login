@@ -8,7 +8,7 @@ type PageProps = {
 };
 
 export default function LoginPage({ searchParams }: PageProps) {
-  const checkEmail = searchParams?.checkEmail === "1";
+  const next = typeof searchParams?.next === "string" ? searchParams!.next : undefined;
 
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
@@ -23,11 +23,10 @@ export default function LoginPage({ searchParams }: PageProps) {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
-            <LoginForm checkEmail={checkEmail} />
+            <LoginForm nextPath={next} />
           </div>
         </div>
       </div>
-
       <div className="bg-muted relative hidden lg:block">
         <Image
           src="/img/login.jpg"
